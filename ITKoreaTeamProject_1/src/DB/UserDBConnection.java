@@ -6,12 +6,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+
+import DTO.ItemDTO;
 
 public class UserDBConnection {
 	Connection con;
+	String dbUrl = "jdbc:oracle:thin:@localhost:1521/xe";
+	String dbUserId = "c##coin666"; 
+	String dbUserPwd = "1234"; 
 	
-	public UserDBConnection(String dbUrl, String dbUserId, String dbUserPwd){
+	public UserDBConnection(){
 		try {
 			//jdbc와 oracleDB를 연결해주는 드라이버
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -26,15 +33,13 @@ public class UserDBConnection {
 	
 	public int selectLogin(String userId, String userPwd) {
 		try {
-			//OracleDB에 ITEM_TB테이블을 조회한다.
-			String sql = "SELECT * FROM ITEM_TB";
+			//OracleDB에서 User_TB를 조회한다.
+			String sql = "SELECT * FROM USER_TB";
 			//연결된 오라클드라이버에서 실행할 객체를 생성
 			Statement st = con.createStatement();
 			//객체에 쿼리문을 담아 오라클DB에서 실행을하고 그 결과를 rs객체에 저장한다.(레코드로 저장)
 			ResultSet rs = st.executeQuery(sql);
 			
-			System.out.println(rs.getString(0));
-			return 1;
 //			while(rs.next()) {
 //				if(rs.getString("userId").equals(userId)) {
 //					if(rs.getString("userPwd").equals(userPwd)) {

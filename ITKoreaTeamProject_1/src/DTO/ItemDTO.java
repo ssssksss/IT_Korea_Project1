@@ -14,6 +14,14 @@ public class ItemDTO {
 		this.itemNum = itemNum;
 	}
 	
+	public ItemDTO(ItemDTO dto) {
+		this.itemNo = dto.itemNo;
+		this.itemName = dto.itemName;
+		this.itemPrice = dto.itemPrice;
+		this.itemNum = dto.itemNum;
+	}
+	
+	
 	public int getItemNo() {
 		return itemNo;
 	}

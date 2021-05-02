@@ -24,9 +24,10 @@ public class HomeView {
 				new LoginView();
 			} else if(num==2) {
 				System.out.println("회원가입 화면");
-	//			new JoinView();
+				new JoinView();
 			} else if(num==3) {
 				System.out.println("종료");
+				break;
 			}
 		}
 	}

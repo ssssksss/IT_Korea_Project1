@@ -17,7 +17,7 @@ public class MainView {
 			
 			//Controller
 			if(num==1) {
-				new SeviceView();
+				new ServiceView();
 			} else if(num==2) {
 				break;
 			}

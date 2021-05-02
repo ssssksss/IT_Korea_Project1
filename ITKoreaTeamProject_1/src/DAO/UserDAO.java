@@ -5,19 +5,20 @@ import java.util.HashSet;
 import DB.UserDBConnection;
 
 public class UserDAO {
+	
+	UserDBConnection userDB = new UserDBConnection();
+	
+	public UserDAO() {
 		
-	public int userLogin(String userId,String userPwd) {
-		HashSet<String> setLoginInform = new HashSet<>();
-		//아이디와 비번을 받아올 Set리스트
-		String dbUrl = "jdbc:oracle:thin:@localhost:1521/xe";
-		String dbUserId = "c##coin666"; 
-		String dbUserPwd = "1234"; 
-		//DB에 접속할 객체 생성
-		UserDBConnection userDBConnection = new UserDBConnection(dbUrl,dbUserId,dbUserPwd);
-		//객체를 생성한 것으로 select조회 문을 받아온다.
-		return userDBConnection.selectLogin(userId, userPwd);
 	}
-}
+	
+	public void joinUser() {
+		
+	}
+	
+	
+	
+}//itemInform.getItemNum()
 
 
 //package DAO;

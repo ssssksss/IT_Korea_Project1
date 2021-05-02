@@ -13,14 +13,15 @@ import DTO.ItemDTO;
 
 public class ItemDBConnection {
 	Connection con;
-	List<ItemDTO> itemList = new ArrayList<>(); //상품의 정보를 보관하는 리스트
-	String dbUrl = "jdbc:oracle:thin:@localhost:1521/xe";
-	String dbUserId = "c##coin666"; 
-	String dbUserPwd = "1234"; 
+	 //상품의 데이터를 보관하는 리스트(리턴값 반환 용도)
+	List<ItemDTO> itemList = new ArrayList<>();
 	
-	//ItemDBConnection객체에 OracleDB드라이버와 Oracle접속할 유저의 정보를 저장
+	//[1] ItemDBConnection객체를 가지고 있는 객체는 OracleDB에 접속할 환경을 가지고 있음
 	public ItemDBConnection(){
 		try {
+			String dbUrl = "jdbc:oracle:thin:@localhost:1521/xe";
+			String dbUserId = "c##coin666"; 
+			String dbUserPwd = "1234"; 
 			//jdbc와 oracleDB를 연결해주는 드라이버
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			//OracleDB에 접속주소, DB유저정보를 con객체에 저장
@@ -32,8 +33,7 @@ public class ItemDBConnection {
 		}
 	}
 	
-	//모든 상품을 조회하여 List로 반환, 전체 흐름에서 한번만 실행됨
-	//DB에서 매번 꺼내사용하는 것이 아닌 Dao객체에 모든상품의 정보를 보관하게 함
+	//[2]상품DB에 모든 상품 데이터를 가져오는 과정
 	public List selectAllItem() {
 		try {
 			//OracleDB에 ITEM_TB테이블을 조회한다.
@@ -56,10 +56,10 @@ public class ItemDBConnection {
 		}
 		return itemList;
 	}
-	
+	//[3] 상품DB에 구매한 상품의 수량만큼 전체 재고에서 빼는 과정
 	public void updateBuyItem(int itemNO, int itemNum) {
 		try {
-			//변경할 값과 변경되는 레코드의 조건 넣기
+			//상품의 번호를 찾아 재고에서 구매할 수량만큼 뺀다.
 			String sql = "UPDATE ITEM_TB SET ITEM_STOCK=ITEM_STOCK-"+itemNum+" WHERE ITEM_NO="+itemNO;
 			PreparedStatement pst = con.prepareStatement(sql);
 			pst.executeUpdate();

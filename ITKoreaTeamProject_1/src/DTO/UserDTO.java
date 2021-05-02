@@ -6,6 +6,14 @@ public class UserDTO {
 	private String userName;
 	private String userPhone;
 	
+	public UserDTO(String userId, String userPwd, String userName, String userPhone) {
+		super();
+		this.userId = userId;
+		this.userPwd = userPwd;
+		this.userName = userName;
+		this.userPhone = userPhone;
+	}
+	
 	public String getUserId() {
 		return userId;
 	}

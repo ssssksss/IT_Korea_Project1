@@ -20,17 +20,23 @@ public class LoginView {
 			userPwd = sc.next();
 			
 			//Controller
-			UserDAO login = new UserDAO();
-			//return 1: 로그인성공, 2: 아이디틀림, 3:비번틀림
-//			int num = login.userLogin(userId,userPwd);
-//			if(num==1) {
-//				System.out.println("로그인 성공");
-//				new MainView();
-//			} else if(num==2) {
-//				System.out.println("아이디가 존재하지 않습니다");
-//			} else if(num==3) {
-//				System.out.println("비번이 틀렸습니다.");
-//			}
+			UserDAO userDAO = new UserDAO();
+			int num = userDAO.loginUser(userId,userPwd);//(userDAO[3]참고)
+			//로그인 성공
+			if(num==1) {
+				System.out.println("로그인 성공");
+				new MainView();
+			}
+			//비밀번호가 틀렸습니다
+			else if(num==2) {
+				System.out.println("비밀번호가 틀렸습니다. 홈 화면으로 돌아갑니다");
+				break;
+			}
+			//아이디가 존재하지 않습니다.
+			else if(num==3) {
+				System.out.println("아이디가 존재하지 않습니다. 홈 화면으로 돌아갑니다");
+				break;
+			}
 		}
 	}
 }

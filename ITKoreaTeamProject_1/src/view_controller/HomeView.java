@@ -6,7 +6,7 @@ import DAO.UserDAO;
 
 public class HomeView {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException {
 		Scanner sc = new Scanner(System.in);
 		
 		while(true) {

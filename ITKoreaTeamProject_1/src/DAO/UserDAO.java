@@ -1,57 +1,28 @@
 package DAO;
 
-import java.util.HashSet;
-
 import DB.UserDBConnection;
+import DTO.UserDTO;
 
 public class UserDAO {
 	
 	UserDBConnection userDB = new UserDBConnection();
-	
+	//[1]
 	public UserDAO() {
 		
 	}
-	
-	public void joinUser() {
-		
+	//[2]
+	public int joinUser(UserDTO userDTO) throws ClassNotFoundException {
+		//유저DB에서 회원가입이 가능한지에 대한 결과 (UserDBConnection[3]참고)
+		int result = userDB.insertJoinUser(userDTO);
+		//1. 회원가입성공 2.이미존재하는아이디 3. 회원가입실패
+		return result;
+	}
+	//[3]
+	public int loginUser(String userId, String userPwd) {
+		//유저DB에서 아이디와 패스워드가 존재하는지에 대한 결과 (UserDBConnection[2]참고)
+		int result = userDB.selectLoginUser(userId, userPwd);
+		//1 로그인성공, 2 비번틀림 3 아이디 존재하지않음 4 에러발생
+		return result;
 	}
 	
-	
-	
-}//itemInform.getItemNum()
-
-
-//package DAO;
-//
-//import DB.userDBconn;
-//import DTO.userDTO;
-//
-//public class userDAO {
-//	String dburl = "jdbc:oracle:thin:@localhost:1521/xe";
-//	String dbuserid = "c##coin666"; 
-//	String dbuserpwd = "1234"; 
-//	userDBconn userdb = new userDBconn(dburl,dbuserid,dbuserpwd);
-//	
-//	//유저 회원가입 메소드
-//	public int join(userDTO dto) {
-//			try {
-//				//자바문제 -1, DB에 접속하여 회원가입이 가능하면 1, 유저정보가 이미 존재하면 2
-//				return userdb.insert(dto);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		return -1;
-//	}
-//	
-//	//유저 로그인 메소드
-//	public int login(userDTO dto) {
-//		try {
-//			// 자바문제 -1 ,로그인 성공 1, 비번틀릴경우 2, 아이디존재하지않는경우 3 , DB조회중에 오류발생 4
-//			return userdb.select(dto);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		//그외의 에러
-//		return -1;
-//	}
-//}
+}

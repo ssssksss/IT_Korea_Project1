@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import DTO.ItemDTO;
+import DTO.UserDTO;
 
 public class UserDBConnection {
 	Connection con;
@@ -18,6 +19,7 @@ public class UserDBConnection {
 	String dbUserId = "c##coin666"; 
 	String dbUserPwd = "1234"; 
 	
+	//[1] 객체를 생성하면 OracleDB에 접속할 권한을 갖게 만듬
 	public UserDBConnection(){
 		try {
 			//jdbc와 oracleDB를 연결해주는 드라이버
@@ -31,7 +33,8 @@ public class UserDBConnection {
 		}
 	}
 	
-	public int selectLogin(String userId, String userPwd) {
+	//[2] DB에서 로그인이 가능한지 확인하는 과정
+	public int selectLoginUser(String userId, String userPwd) {
 		try {
 			//OracleDB에서 User_TB를 조회한다.
 			String sql = "SELECT * FROM USER_TB";
@@ -40,20 +43,20 @@ public class UserDBConnection {
 			//객체에 쿼리문을 담아 오라클DB에서 실행을하고 그 결과를 rs객체에 저장한다.(레코드로 저장)
 			ResultSet rs = st.executeQuery(sql);
 			
-//			while(rs.next()) {
-//				if(rs.getString("userId").equals(userId)) {
-//					if(rs.getString("userPwd").equals(userPwd)) {
-//						//아이디와 비번 둘다 일치할 경우
-//						return 1;
-//					}
-//					else {
-//						//아이디는 일치 비번은 불일치
-//						return 2;
-//					}
-//				}
-//				//아이디가 존재하지 않음
-//				return 3;
-//			}
+			while(rs.next()) {
+				if(rs.getString("userId").equals(userId)) {
+					if(rs.getString("userPwd").equals(userPwd)) {
+						//아이디와 비번 둘다 일치할 경우
+						return 1;
+					}
+					else {
+						//아이디는 일치 비번은 불일치
+						return 2;
+					}
+				}
+			}
+			//아이디가 존재하지 않음
+			return 3;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -62,78 +65,33 @@ public class UserDBConnection {
 		return 0;
 	}
 	
+	//[3] DB에 회원가입 정보를 넣는 과정
+	public int insertJoinUser(UserDTO userDTO) throws ClassNotFoundException {
 	
+		String sql = "SELECT * FROM USET_TB";
+		try (Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql); ) {
+	
+		while(rs.next()) {
+			//DB에서 userID가 존재하는지 검색
+			if(rs.getString("userId").equals(userDTO.getUserId())) {
+				//id가 존재하면 리턴값 0
+				return 2;
+			}
+		}
+		
+		//DB에 회원정보를 넣기
+		sql = "INSERT INTO USER_TB VALUES (";
+		String sql2 = userDTO.getUserId()+","+userDTO.getUserPwd()+","+userDTO.getUserName()+","+userDTO.getUserPhone();
+		sql = sql + sql2 +")";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.executeUpdate();
+		ps.close();
+		con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 1;
+	}
 }
-//	
-//	//DB조회하는 메소드
-//	public int select(userDTO dto){
-//		try {
-//			String sql = "SELECT * FROM PCMEMBER";
-//			Class.forName("oracle.jdbc.driver.OracleDriver");
-//			Statement st = con.createStatement();
-//			ResultSet rs = st.executeQuery(sql);
-//
-//			while(rs.next()) {
-//				//DB에서 userID가 존재하는지 검색
-//				if(rs.getString("userID").equals(dto.getUserID())) {
-//					//DB에서 아이디를 찾고 비번까지 일치하는지 확인
-//					if(rs.getString("userPWD").equals(dto.getUserPWD())) {
-//						//아이디와 비번까지 일치했을때 리턴값 1
-//						return 1;
-//					}
-//					else {
-//						//아이디는 일치하지만 비번은 틀린경우 리턴값 2
-//						return 2;
-//					}
-//				}
-//			}
-//			rs.close();
-//			st.close();
-//			con.close();
-//			//아이디를 찾지 못했을 경우 리턴값 3
-//			return 3;
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		//DB조회 중에 에러
-//		return 4;
-//	}
-//	
-//	//DB에 회원정보를 넣는 메소드
-//	public int insert(userDTO dto) throws ClassNotFoundException {
-//
-//		String sql = "SELECT * FROM PCMEMBER";
-//		Class.forName("oracle.jdbc.driver.OracleDriver");
-//		try (Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql); ) {
-//
-//		while(rs.next()) {
-//			//DB에서 userID가 존재하는지 검색
-//			if(rs.getString("userID").equals(dto.getUserID())) {
-//				//id가 존재하면 리턴값 0
-//				return 2;
-//			}
-//		}
-//		
-//		//DB에 회원정보를 넣기
-//		sql = "INSERT INTO PCMEMBER VALUES(?, ?, ?, ? ,? ,?)";
-//		PreparedStatement ps = con.prepareStatement(sql);
-//		ps.setString(1, dto.getUserID());
-//		ps.setString(2, dto.getUserPWD());
-//		ps.setString(3, dto.getUserNAME());
-//		ps.setString(4, dto.getUserBIRTH());
-//		ps.setString(5, dto.getUserPHONE());
-//		ps.setString(6, dto.getUserEMAIL());
-//		ps.executeUpdate();
-//		ps.close();
-//		con.close();
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return 1;
-//	}
 

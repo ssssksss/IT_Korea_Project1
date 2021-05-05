@@ -18,6 +18,9 @@ public class UserDBConnection {
 	String dbUrl = "jdbc:oracle:thin:@localhost:1521/xe";
 	String dbUserId = "c##coin666"; 
 	String dbUserPwd = "1234"; 
+	Statement st = null;
+	ResultSet rs = null;
+	PreparedStatement ps = null;
 	
 	//[1] 객체를 생성하면 OracleDB에 접속할 권한을 갖게 만듬
 	public UserDBConnection(){
@@ -34,18 +37,12 @@ public class UserDBConnection {
 	}
 	
 	//[2] DB에서 로그인이 가능한지 확인하는 과정
-	public int selectLoginUser(String userId, String userPwd) {
-		try {
-			//OracleDB에서 User_TB를 조회한다.
-			String sql = "SELECT * FROM USER_TB";
-			//연결된 오라클드라이버에서 실행할 객체를 생성
-			Statement st = con.createStatement();
-			//객체에 쿼리문을 담아 오라클DB에서 실행을하고 그 결과를 rs객체에 저장한다.(레코드로 저장)
-			ResultSet rs = st.executeQuery(sql);
-			
+	public int checkLoginUser(String userId, String userPwd) throws SQLException {
+		String sql = "SELECT * FROM USER_TB";
+		try(Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql);) {
 			while(rs.next()) {
-				if(rs.getString("userId").equals(userId)) {
-					if(rs.getString("userPwd").equals(userPwd)) {
+				if(rs.getString("USER_ID").equals(userId)) {
+					if(rs.getString("USER_PWD").equals(userPwd)) {
 						//아이디와 비번 둘다 일치할 경우
 						return 1;
 					}
@@ -57,41 +54,85 @@ public class UserDBConnection {
 			}
 			//아이디가 존재하지 않음
 			return 3;
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		return 0;
+		return 4;
 	}
 	
 	//[3] DB에 회원가입 정보를 넣는 과정
-	public int insertJoinUser(UserDTO userDTO) throws ClassNotFoundException {
-	
-		String sql = "SELECT * FROM USET_TB";
+	public int addJoinUser(UserDTO userDTO) throws ClassNotFoundException, SQLException {
+		String sql = "SELECT * FROM USER_TB";
 		try (Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql); ) {
-	
-		while(rs.next()) {
-			//DB에서 userID가 존재하는지 검색
-			if(rs.getString("userId").equals(userDTO.getUserId())) {
-				//id가 존재하면 리턴값 0
-				return 2;
+			while(rs.next()) {
+				//DB에서 userID가 존재하는지 검색
+				if(rs.getString("USER_ID").equals(userDTO.getUserId())) {
+					//id가 존재하면 리턴값 2
+					return 2;
+				}
 			}
-		}
-		
-		//DB에 회원정보를 넣기
-		sql = "INSERT INTO USER_TB VALUES (";
-		String sql2 = userDTO.getUserId()+","+userDTO.getUserPwd()+","+userDTO.getUserName()+","+userDTO.getUserPhone();
-		sql = sql + sql2 +")";
-		PreparedStatement ps = con.prepareStatement(sql);
-		ps.executeUpdate();
-		ps.close();
-		con.close();
+			//DB에 회원정보를 넣기
+			sql = "INSERT INTO USER_TB VALUES ('";
+			sql += userDTO.getUserId()+"','"+userDTO.getUserPwd()+"','"+userDTO.getUserName()+"','"+userDTO.getUserPhone()+"')";
+			ps = con.prepareStatement(sql);
+			ps.executeUpdate();
+			ps.close();
+			//회원가입 성공하면 리턴값1
+			return 1;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return 1;
+		//그 외의 오류 리턴값 3
+		return 3;
 	}
+	
+	//[4] DB에 회원 탈퇴 하는 과정
+	public int deleteUser(String userId, String userPwd) throws ClassNotFoundException, SQLException {
+		String sql = "DELETE FROM USER_TB WHERE USER_ID='"+userId+"'";
+		try (PreparedStatement pst = con.prepareStatement(sql); ) {
+			//DB에 회원정보 삭제
+			pst.executeUpdate();
+			pst.close();
+			//회원가입 탈퇴 성공하면 리턴값1
+			return 1;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//그 외의 오류 리턴값 3
+		return 2;
+	}
+	
+	//[5] DB에 있는 유저의 회원 정보를 바꾼다.
+	public int changeInformUser(UserDTO userDTO) throws ClassNotFoundException, SQLException {
+		String sql = "UPDATE USER_TB SET USER_PWD='"+userDTO.getUserPwd()+"', USER_NAME='";
+		sql+=userDTO.getUserName()+"', USER_PHONE='"+userDTO.getUserPhone()+"' WHERE USER_ID='"+userDTO.getUserId()+"'";
+		
+		try (PreparedStatement pst = con.prepareStatement(sql); ) {
+			pst.executeUpdate();
+			pst.close();
+			return 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 2;
+	}
+	
+	//[6] DB에 휴대폰번호를 넣어 유저의 아이디와 비밀번호를 가져온다.
+	public UserDTO findUserIdPwd(String userPhone) throws ClassNotFoundException, SQLException {
+		String sql = "SELECT * FROM USER_TB WHERE USER_PHONE='"+userPhone+"'";
+		try (Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql); ) {
+			while(rs.next()) {
+				//DB에서 userID가 존재하는지 검색
+				if(rs.getString("USER_PHONE").equals(userPhone)) {
+					UserDTO userDTO = new UserDTO(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4));
+					return userDTO;
+				}
+			}
+			return null;
+		}
+	}//userDTO.getUserId()+"','"+userDTO.getUserPwd()+"','"+userDTO.getUserName()+"','"+userDTO.getUserPhone()+"')"
+	
 }
 

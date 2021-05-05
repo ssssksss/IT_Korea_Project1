@@ -34,14 +34,9 @@ public class ItemDBConnection {
 	}
 	
 	//[2]상품DB에 모든 상품 데이터를 가져오는 과정
-	public List selectAllItem() {
-		try {
-			//OracleDB에 ITEM_TB테이블을 조회한다.
-			String sql = "SELECT * FROM ITEM_TB";
-			//연결된 오라클드라이버에서 실행할 객체를 생성, 질의문을 담을 그릇??
-			Statement st = con.createStatement();
-			//객체에 쿼리문을 담아 오라클DB에서 실행을하고 그 결과를 rs객체에 저장한다.(레코드로 저장)
-			ResultSet rs = st.executeQuery(sql);
+	public List<ItemDTO> getAllItem() {
+		String sql = "SELECT * FROM ITEM_TB";
+		try(Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql);) {
 			
 			while(rs.next()) {
 				int obj1 = Integer.parseInt(rs.getString(1));
@@ -53,7 +48,7 @@ public class ItemDBConnection {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		} 
 		return itemList;
 	}
 	//[3] 상품DB에 구매한 상품의 수량만큼 전체 재고에서 빼는 과정
@@ -66,7 +61,7 @@ public class ItemDBConnection {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		} 
 	}
 }
 

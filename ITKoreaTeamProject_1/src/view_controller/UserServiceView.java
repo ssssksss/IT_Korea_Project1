@@ -6,9 +6,9 @@ import java.util.List;
 import DAO.ItemDAO;
 import DTO.ItemDTO;
 
-public class ServiceView {
+public class UserServiceView {
 	
-	public static void main(String[] args) {
+	UserServiceView() {
 		Scanner sc = new Scanner(System.in);
 		//유저의 상품데이터를 가지고 있는 DAO객체 생성
 		ItemDAO itemDao = new ItemDAO();
@@ -22,13 +22,13 @@ public class ServiceView {
 			//랜덤으로 상품한개를 보여주고 randomItem에 상품을 잠시 기억한다.
 			ItemDTO randomItem = itemDao.showOneItem(); //(ItemDAO[2]참고)
 			
-			System.out.println("1. 다른 상품 보기");
-			System.out.println("2. 모든 상품 보기 ");
-			System.out.println("3. 위에 상품 장바구니에 담기");
-			System.out.println("4. 장바구니 담긴 목록 보기");
-			System.out.println("5. 장바구니 상품 선택 제거하기 ");
-			System.out.println("6. 상품 구매하기 ");
-			System.out.println("7. 서비스 화면으로 ");
+			System.out.println("[1]다른 상품 보기");
+			System.out.println("[2]모든 상품 보기 ");
+			System.out.println("[3]위에 상품 장바구니에 담기");
+			System.out.println("[4]장바구니 담긴 목록 보기");
+			System.out.println("[5]장바구니 상품 선택 제거하기 ");
+			System.out.println("[6]상품 구매하기 ");
+			System.out.println("[7]서비스 화면으로 ");
 			int num = sc.nextInt();
 			
 			//Controller
@@ -47,7 +47,7 @@ public class ServiceView {
 				System.out.println("구매할 수량을 입력해주세요");
 				//랜덤으로 보여준 상품에 담을 수량을 선택한다.
 				randomItem.setItemNum(sc.nextInt()); //장바구니에 담을 상품 수량 넣기
-				itemDao.putItemCart(randomItem);//(ItemDAO[4]참고) //장바구니에 상품 추가
+				itemDao.addItemCart(randomItem);//(ItemDAO[4]참고) //장바구니에 상품 추가
 			} 
 			//4. 장바구니에 담긴 목록 보기
 			else if(num==4) { 
@@ -55,7 +55,7 @@ public class ServiceView {
 				itemDao.showItemCart();//(ItemDAO[5]참고)
 			} 
 			//5. 장바구니 상풍 선택 제거
-			else if(num==6) {
+			else if(num==5) {
 				int removeNum = -1;
 				while(removeNum!=0) {
 					System.out.println("=== 장바구니에 담긴 목록입니다. ===");
